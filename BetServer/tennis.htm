@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+    <META NAME="GENERATOR" Content="Microsoft Visual Studio">
+    
+    <TITLE>Tennis</TITLE>
+
+    <style>
+        * {
+            cursor: pointer;
+        }
+
+        input:active {
+            background: #008CBA;
+        }
+
+        #serverDataStream {
+            width: 50%;
+            height: 80px;
+            overflow-y: auto;
+            overflow-wrap: anywhere;
+            padding: 3px;
+            border: 2px solid black;
+        }
+
+        input[value="АВТОРИЗОВАН"] {
+            background: #f44336;
+            border-radius: 5px;
+        }
+
+        #innings_1 {
+            background: white;
+            color: black;
+            opacity: 0.1;
+            border-radius: 50px;
+        }
+
+            #innings_1[value="<"] {
+                background: red;
+                color: red;
+                opacity: 1.0;
+                border-radius: 50px;
+            }
+
+        #innings_2 {
+            background: white;
+            color: black;
+            opacity: 0.1;
+            border-radius: 50px;
+        }
+
+            #innings_2[value="<"] {
+                background: red;
+                color: red;
+                opacity: 1.0;
+                border-radius: 50px;
+            }
+
+        #score {
+            background: #5F9EA0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        input[value="НЕАКТИВНО"] {
+            background: #4CAF50;
+            opacity: 0.1;
+            cursor: not-allowed;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 36px 16px;
+            min-width: 220px;
+        }
+
+        input[value="ПУСК"] {
+            background: #4CAF50;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 36px 16px;
+            min-width: 220px;
+        }
+
+        input[value="СТОП"] {
+            background: #f44336;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 36px 16px;
+            min-width: 220px;
+        }
+
+
+        #set_point_press {
+            background: #FFD700;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 20px 16px;
+            min-width: 100px;
+            min-height: 70px;
+        }
+
+            #set_point_press:active {
+                background: #f44336;
+            }
+
+        #double_fault_val {
+            background: #BA55D3;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 18px 16px;
+            min-width: 80px;
+            min-height: 40px;
+        }
+
+            #double_fault_val:active {
+                background: #f44336;
+            }
+
+        #cancel_point_press {
+            background: #4CAF50;
+            border-radius: 5px;
+            font-size: 16px;
+            padding: 6px 12px;
+        }
+
+            #cancel_point_press:active {
+                background: #f44336;
+            }
+
+        #decr_point_press {
+            background: #FFD700;
+            border-radius: 5px;
+            font-size: 16px;
+            padding: 6px 12px;
+        }
+
+            #decr_point_press:active {
+                background: #f44336;
+            }
+
+        #double_fault_press {
+            background: #BA55D3;
+            border-radius: 5px;
+            font-size: 16px;
+            padding: 6px 12px;
+        }
+
+            #double_fault_press:active {
+                background: #f44336;
+            }
+    </style>
+
+</HEAD>
+<BODY>
+
+    <p>
+        <h1><strong>Tennis</strong></h1>
+    </p>
+
+    <! Блок авторизации -->
+    <form>
+        <p>
+            <strong>Логин:</strong>
+            <input name="login" id="login" required>
+        </p>
+        <p>
+            <strong>Пароль:</strong>
+            <input type="password" name="login" id="password" required>
+        </p>
+        <input type="button" class="command" rel="auth" id="auth" value="Войти" />
+    </form>
+
+    <! Блок выбора игры -->
+    <form action="" id="set_tennis">
+        <p>
+            <strong>ID матча:</strong>
+            <input name="fectivForm" hidden>
+            <input type="text" name="gameID" id="gameID" required>
+        </p>
+        <p>
+            <input type="button" class="command" rel="set_tennis" value="Отправить" />
+        </p>
+    </form>
+
+    <! Информационное табло -->
+    <div id="serverDataStream">
+
+    </div>
+
+    <! Блок открытия и отмены сета -->
+    <! Выбор номера сета -->
+    <form class="set_num" action="" name="set_num">
+        <p>
+            <label for="set_num"><strong>Выбор сета </strong></label>
+            <select name="set_num" id="set_num">
+                <option selected value="0">-----</option>
+                <option value="1">1 сет</option>
+                <option value="2">2 сет</option>
+                <option value="3">3 сет</option>
+                <option value="4">4 сет</option>
+                <option value="5">5 сет</option>
+            </select>
+        </p>
+    </form>
+    <! Выбор подающего игрока -->
+    <form action="" name="side_play">
+        <p>
+            <strong>Выберите подающего</strong>
+        </p>
+        <p>
+            <input type="radio" name="player" trel="1" value="1" required />
+            <input type="text" id="player_1" value="" readonly />
+            <input type="button" size="2" id="innings_1" value="" />
+        </p>
+        <p>
+            <input type="radio" name="player" trel="0" value="0" required />
+            <input type="text" id="player_2" value="" readonly />
+            <input type="button" size="2" id="innings_2" value="" />
+        <p>
+    </form>
+    <! Открыть сет -->
+    <form action="" id="set_set">
+        <p>
+            <input type="button" class="command" rel="set_set" value=" Выбрать сет  " />
+        </p>
+    </form>
+    <! Отмена сета -->
+    <form action="" id="cancel_set">
+        <p>
+            <input type="button" class="command" rel="cancel_set" value="Отменить сет" />
+        </p>
+    </form>
+
+    <! Счёт в сете -->
+    <div>
+        <p>
+            <strong>Счёт в сете</strong>
+        </p>
+        <p>
+            <input type="text" size="10" id="score" value="" readonly />
+        </p>
+    </div>
+
+    <! Запуск секундомера -->
+    <div id="by_point">
+        <p><strong>Активный мяч</strong></p>
+        <p>
+            <input type="button" class="command" id="by_point_press" rel="by_point" value="НЕАКТИВНО" />
+        </p>
+    </div>
+
+    <! Засчитать розыгрыш -->
+    <div id="set_point">
+        <p>
+            <strong>Розыгрыши</strong>
+        </p>
+        <p>
+            <input type="button" class="command" id="set_point_press" rel="set_point" trel="increment" value="НЕАКТИВНО" />
+        </p>
+    </div>
+
+    <! Засчитать двойную ошибку -->
+    <div id="double_fault">
+        <p>
+            <strong>Двойная ошибка</strong>
+        </p>
+        <p>
+            <input type="button" class="command" id="double_fault_val" rel="double_fault" trel="increment" value="НЕАКТИВНО" />
+        </p>
+    </div>
+
+    <! Блок отмен -->
+    <div id="cancel_block">
+        <p>
+            <strong>Блок отмен</strong>
+        </p>
+
+        <div id="cancel_point">
+            <p>
+                <button class="command" id="cancel_point_press" rel="cancel_point">Активный мяч</button>
+            </p>
+        </div>
+
+        <div id="decr_point">
+            <p>
+                <button class="command" id="decr_point_press" rel="set_point" trel="decrement">Розыгрыш</button>
+            </p>
+        </div>
+
+        <div>
+            <p>
+                <button class="command" rel="double_fault" id="double_fault_press" trel="decrement">Двойная ошибка</button>
+            </p>
+        </div>
+    </div>
+
+    <! Закрытие гейма -->
+    <form action="" name="end_games">
+        <p>
+            <strong>Выиграл гейм</strong>
+        </p>
+        <p>
+            <input type="radio" name="games_win" value="1" required /><input type="text" id="winner_1" value="" readonly />
+        </p>
+        <p>
+            <input type="radio" name="games_win" value="0" /><input type="text" id="winner_2" value="" readonly />
+        </p>
+        <p>
+            <input type="button" class="command" rel="end_games" value="Конец гейма" />
+        </p>
+    </form>
+
+    <! Закрытие сета -->
+    <form action="" id="end_set">
+        <p>
+            <b>Комментарии к сету</b>
+        </p>
+        <p>
+            <textarea name="comments" id="comments" rows="3" cols="25"></textarea>
+        </p>
+        <p><input type="button" class="command" rel="end_set" value="Завершить сет" /></p>
+    </form>
+
+    <! Закрытие и сохранение игры -->
+    <form id="end_tennis" action="" name="end_tennis">
+        <p>
+            <b>Закрыть игру</b>
+        </p>
+        <p>
+            <label for="interim">Временно</label>
+            <input type="radio" name="type_end" value="interim" required />
+        </p>
+        <p>
+            <label for="totally">Окончательно</label>
+            <input type="radio" name="type_end" value="totally" />
+        </p>
+        <p>
+            <input type="button" class="command" rel="end_tennis" value="Закрыть игру" />
+        </p>
+    </form>
+
+    <! Скрипты для связи с ws сервером -->
+    <script>
+        window.addEventListener("load", () => { // при загрузке страницы вызывается стрелочная функция
+            const stream = document.querySelector("#serverDataStream"); // объект для вывода в serverDataStream
+
+            function print(data) {
+                const line = document.createElement("div"); // создаём div в serverDataStream - одна строчка
+                line.className = "logLine"; // назначаем строчке класс, для дальнейшей её стилизации
+                line.innerText = data; // назначаем этому элементу содержимое - data
+                stream.appendChild(line); // добавляем эту строчку в stream
+                stream.scrollTop = stream.scrollHeight; // прокручиваем скрол вниз
+            }
+
+            // Кнопка авторизации - Войти
+            function printAuth(text) {
+                document.getElementById("auth").value = text;
+            }
+
+            // Фамилия игрока №1
+            function printPlayer1(text) {
+                document.getElementById("player_1").value = text;
+            }
+
+            // Фамилия игрока №2
+            function printPlayer2(text) {
+                document.getElementById("player_2").value = text;
+            }
+
+            // Метка 1 игрока о подаче
+            function printInnings1(text) {
+                document.getElementById("innings_1").value = text;
+            }
+
+            // Метка 2 игрока о подаче
+            function printInnings2(text) {
+                document.getElementById("innings_2").value = text;
+            }
+
+            // Счёт в сете
+            function printScore(text) {
+                var space = "        " + text;
+                document.getElementById("score").value = space;
+            }
+
+            // Изменение положения кнопки ПУСК/СТОП
+            function printBypoint(text) {
+                document.getElementById("by_point_press").value = text;
+            }
+
+            // Изменение счётчика розыгрышей
+            function counterPoint(text) {
+                document.getElementById("set_point_press").value = text;
+            }
+
+            // Изменение счётчика двойных ошибок
+            function counterFault(text) {
+                document.getElementById("double_fault_val").value = text;
+            }
+
+            // Победитель 1
+            function winner1(text) {
+                document.getElementById("winner_1").value = text;
+            }
+
+            // Победитель 2
+            function winner2(text) {
+                document.getElementById("winner_2").value = text;
+            }
+
+            function log(data) {
+                let arr = data.split("::");
+                // 13 позиций в сообщении:
+
+                // 0) Войти
+                if (arr[0] != "-1")
+                    printAuth(arr[0]);
+
+                // 1) :: Подающий_1
+                if (arr[1] != -1)
+                    printPlayer1(arr[1]);
+
+                // 2) :: Подающий_2
+                if (arr[2] != -1)
+                    printPlayer2(arr[2]);
+
+                // 3) :: Выбор_1
+                if (arr[3] != -1)
+                    printInnings1(arr[3]);
+
+                // 4) :: Выбор_2
+                if (arr[4] != -1)
+                    printInnings2(arr[4]);
+
+                // 5) :: Счёт_в_сете
+                if (arr[5] != -1)
+                    printScore(arr[5]);
+
+                // 6) :: Пуск/Стоп
+                if (arr[6] != -1)
+                    printBypoint(arr[6]);
+
+                // 7) :: Розыгрыш
+                if (arr[7] != -1)
+                    counterPoint(arr[7]);
+
+                // 8) :: Ошибки
+                if (arr[8] != -1)
+                    counterFault(arr[8]);
+
+                // 9) :: Выиграл_1
+                if (arr[9] != -1)
+                    winner1(arr[9]);
+
+                // 10) :: Выиграл_2
+                if (arr[10] != -1)
+                    winner2(arr[10]);
+
+                // 11) :: Информационное_поле
+                if (arr[11] != -1)
+                    print(arr[11]);
+
+                // 12) :: Всплывающее окно
+                if (arr[12] != -1)
+                    alert(arr[12]);
+            }
+
+            // Функция доступа к объектам с выбором radio
+            function getCheckedValue(radioObj) {
+                if (!radioObj)
+                    return "";
+                var radioLength = radioObj.length;
+                if (radioLength == undefined)
+                    if (radioObj.checked)
+                        return radioObj.value;
+                    else
+                        return "";
+                for (var i = 0; i < radioLength; i++) {
+                    if (radioObj[i].checked) {
+                        return radioObj[i].value;
+                    }
+                }
+                return "";
+            }
+
+            // Функция очистки объектов с выбором radio
+            function clearCheckedRadio(radioObj) {
+                if (radioObj) {
+                    var radioLength = radioObj.length;
+                    for (var i = 0; i < radioLength; i++)
+                        radioObj[i].checked = false;
+                }
+            }
+
+            const client = new WebSocket("ws://localhost:9001/"); // связываемся с сервером
+            client.onmessage = ({ data }) => {
+                console.log(data); // выводим информацию в отладочную консоль браузера
+                log(data);         // выводим информацию от сервера пользователю
+            }
+
+            const eventTypeButtons = document.querySelectorAll(".command"); // объект для работы с class="command"
+            eventTypeButtons.forEach((b) => { // перебираем все кнопки command
+                b.addEventListener("click", () => { // действие при клике
+                    var eventS; // переменная для json сообщения серверу
+                    if (b.getAttribute("rel") == "auth") { // авторизация пользователя (получаем значение атрибута rel в кнопке)
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel"),
+                            login: document.getElementById("login").value,
+                            pass: document.getElementById("password").value
+                        }
+                    }
+                    else if (b.getAttribute("rel") == "by_point") { // запуск секундомера
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel")
+                        }
+                    }
+                    else if (b.getAttribute("rel") == "set_point") { // засчитываем розыгрыш
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel"),
+                            type_point: b.getAttribute("trel") // прибавлять или отнимать значение
+                        }
+                    }
+                    else if (b.getAttribute("rel") == "set_tennis") { // инициализируем игру
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel"),
+                            tennis_id: document.getElementById("gameID").value // получаем id игры
+                        }
+                    }
+                    else if (b.getAttribute("rel") == "set_set") { // открываем сет
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel"),
+                            set_num: document.getElementById("set_num").value,
+                            side_play: getCheckedValue(document.side_play.player) // выбираем перебором значение подающего игрока
+                        }
+                        clearCheckedRadio(document.side_play.player);
+                    }
+                    else if (b.getAttribute("rel") == "cancel_set") { // отмена сета
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel"),
+                            set_num: document.getElementById("set_num").value, // номер сета
+                            cancel_message: document.getElementById("comments").value // комментарий к отмене
+                        }
+                        document.getElementById("comments").value = ""; // очищаем поле после отсылки сообщения
+                    }
+                    else if (b.getAttribute("rel") == "cancel_games") { // отменяем гейм
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel")
+                        }
+                    }
+                    else if (b.getAttribute("rel") == "cancel_point") { // отменяем время розыгрыша
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel")
+                        }
+                    }
+                    else if (b.getAttribute("rel") == "double_fault") { // обрабатываем двойную ошибку
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel"),
+                            type_fault: b.getAttribute("trel") // прибавлять или отнимать значение
+                        }
+                    }
+                    else if (b.getAttribute("rel") == "end_games") { // закрываем гейм
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel"),
+                            games_win: getCheckedValue(document.end_games.games_win) // выбираем перебором значение победившего игрока
+                        }
+                        clearCheckedRadio(document.end_games.games_win);
+                    }
+                    else if (b.getAttribute("rel") == "end_set") { // закрываем сет
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel"),
+                            end_message: document.getElementById("comments").value
+                        }
+                        document.getElementById("comments").value = ""; // очищаем поле после отсылки сообщения
+                    }
+                    else if (b.getAttribute("rel") == "end_tennis") { // сохраняем результаты и закрываем игру
+                        eventS = { // формируем команду
+                            command: b.getAttribute("rel"),
+                            type_end: getCheckedValue(document.end_tennis.type_end) // выбираем перебором значение типа закрытия игры
+                        }
+                        clearCheckedRadio(document.end_tennis.type_end);
+                    }
+                    else {
+                        eventS = { // формируем неизвестную команду
+                            command: "unknown"
+                        }
+                    }
+                    client.send(JSON.stringify(eventS));
+                });
+            });
+        });
+    </script>
+
+</BODY>
+</HTML>
